@@ -1,19 +1,23 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'UserInput.dart'; // Import model ở Bước 1
+import 'package:flutter/foundation.dart';
+import 'user_input.dart'; 
 
 class FirebaseService {
-  // Lấy instance của Firestore
   final FirebaseFirestore _db = FirebaseFirestore.instance;
 
-  // Hàm lưu dữ liệu người dùng vào Firestore
   Future<void> saveUser(UserInput user) async {
     try {
-      // Chỉ định chính xác Collection tên là 'Users'
-      await _db.collection('Users').add(user.toMap());
-      print('Đã lưu dữ liệu lên Firestore thành công!');
+      // Chỉ định chính xác Collection tên là 'Users' và thêm dữ liệu dạng Map
+      DocumentReference docRef = await _db.collection('Users').add(user.toMap());
+      
+      // In ra ID của document vừa tạo để tiện theo dõi khi debug
+      print('Đã lưu dữ liệu lên Firestore thành công! Document ID: ${docRef.id}');
     } catch (e) {
-      print('Lỗi khi lưu dữ liệu: $e');
-      rethrow; // Đẩy lỗi ra ngoài để giao diện hiển thị nếu cần
+      // In chi tiết lỗi ra console của nhà phát triển
+      print('Lỗi xảy ra tại FirebaseService.saveUser: $e');
+      
+      // Đẩy lỗi ra ngoài để phía Giao diện (UI) có thể catch và hiển thị SnackBar thông báo cho người dùng
+      rethrow; 
     }
   }
 }
